@@ -190,8 +190,8 @@ section{animation:fi .25s ease}
 
 <section id="p_lapor" class="hid">
 <div class="card"><h2>📊 Laporan bulanan saya</h2><div id="rp"></div>
-<button class="btn g" onclick="cp()">📋 Salin laporan</button></div>
-<div class="card"><h2>🧓 Jualan bulanan Ayah</h2><div id="ra"></div></div>
+<button class="btn" onclick="pdfLap('Saya')">📄 Cetak laporan PDF</button><button class="btn g" onclick="cp()">📋 Salin laporan</button></div>
+<div class="card"><h2>🧓 Jualan bulanan Ayah</h2><div id="ra"></div><button class="btn g" onclick="pdfLap('Ayah')">📄 Cetak laporan Ayah (PDF)</button></div>
 <div class="card"><h2>👤 Akaun</h2><div id="ac" style="font-size:14px"></div><div id="ae" style="font-size:12px;color:var(--bad);margin-top:6px"></div><button class="btn g" onclick="aOut()">Log keluar</button></div>
 <div class="card"><h2>💾 Sandaran data</h2><p style="margin:0;font-size:13px;color:var(--mu)">Data disimpan dalam telefon ini. Buat sandaran sekali-sekala, dan guna Pulihkan jika tukar telefon.</p><button class="btn g" onclick="ex()">⬇️ Simpan sandaran</button><button class="btn g" onclick="$('imf').click()">⬆️ Pulihkan dari sandaran</button><input type="file" id="imf" accept=".json,application/json" class="hid" onchange="im(this)"></div>
 </section>
@@ -234,7 +234,7 @@ section{animation:fi .25s ease}
 <div id="i_hr" class="hid"><label>Jumlah bayaran (RM)</label><input id="i_h" type="number" inputmode="decimal" step="0.01" placeholder="Cth: 690"><div style="font-size:12px;color:var(--mu);margin-top:4px">Masuk ke Belanja secara automatik (🛒 Beli ikan).</div></div>
 <div class="row"><div><label>Tarikh</label><input id="i_d" type="date"></div><div><label>Catatan (pilihan)</label><input id="i_n" placeholder="Cth: Lubang 3A"></div></div>
 <button class="btn" onclick="iSave()">Simpan stok</button><button class="btn g" onclick="iClose()">Batal</button></div></div>
-<div id="lgn"><div class="lbx"><div class="brand">ABENGOH LEGACY</div><div style="font-size:40px;margin-top:4px">🐟</div><h2>Rekod Jualan Ikan</h2><p>Log masuk untuk teruskan</p><button class="gbtn" onclick="aGoogle()"><svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> Log masuk dengan Google</button><div class="lalt"><a onclick="$('l_pw').classList.toggle('hid')">atau guna kata laluan</a></div><div id="l_pw" class="hid"><input id="l_e" type="text" autocomplete="username" autocapitalize="off" autocorrect="off" placeholder="Nama pengguna atau emel"><input id="l_p" type="password" autocomplete="current-password" placeholder="Kata laluan" onkeydown="if(event.key=='Enter')aLogin()"><button class="btn" id="l_b" onclick="aLogin()">Log masuk</button></div><div id="l_m" class="lmsg"></div></div></div>
+<div id="lgn"><div class="lbx"><div class="brand">ABENGOH LEGACY</div><div style="font-size:40px;margin-top:4px">🐟</div><h2>Rekod Jualan Ikan</h2><p>Log masuk untuk teruskan</p><div id="l_pw"><input id="l_e" type="text" autocomplete="username" autocapitalize="off" autocorrect="off" placeholder="Nama pengguna atau emel"><input id="l_p" type="password" autocomplete="current-password" placeholder="Kata laluan" onkeydown="if(event.key=='Enter')aLogin()"><button class="btn" id="l_b" onclick="aLogin()">Log masuk</button></div><div id="l_m" class="lmsg"></div></div></div>
 <div id="ts"></div>
 <nav>
 <button class="on" onclick="tab('jual',this)"><span>🐟</span>Jualan</button>
@@ -302,6 +302,32 @@ BL.L.forEach(function(x){var a=x.k*x.h;tot+=a;h+='<div class="rw"><span>'+x.j+' 
 h+='<div class="tot" style="margin-top:8px">JUMLAH: '+rm(tot)+'</div>'+(D.pay?'<div style="font-size:12px;color:var(--mu);margin-top:8px">Bayaran: '+esc(D.pay)+'</div>':'');$('bv').innerHTML=h}
 var ADDR='Sungai Pengkalan Nangka, 16200 Tumpat, Kelantan';
 function n2(n){return n.toLocaleString('en-MY',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function pdfSave(d,fn){try{var bl=d.output('blob'),f=new File([bl],fn,{type:'application/pdf'});if(navigator.canShare&&navigator.canShare({files:[f]})){return navigator.share({files:[f],title:fn}).then(function(){toast('PDF dikongsi ✓')},function(e){if(!e||e.name!='AbortError')toast('Gagal kongsi PDF.')})}var u=URL.createObjectURL(bl),a=document.createElement('a');a.href=u;a.download=fn;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(u)},3000);toast('PDF dimuat turun ✓')}catch(e){toast('Gagal simpan PDF.')}}
+function pdfLap(who){var J=window.jspdf&&window.jspdf.jsPDF;if(!J){toast('PDF belum sedia, cuba sebentar lagi.');return}
+var o=stats(),me=who=='Saya',w=o.w[who],wm=w.m||{Keli:0,Patin:0},d=new J({unit:'mm',format:'a4'}),W=210,m=14,y=0,co=D.shop||'Abengoh Legacy',mon=MS[M.getMonth()]+' '+M.getFullYear(),T=[14,124,134],DK=[10,64,74],LT=[238,246,247],GR=[110,125,130],TX=[40,50,55],dk=['Ahd','Isn','Sel','Rab','Kha','Jum','Sab'];
+function tx(c){d.setTextColor(c[0],c[1],c[2])}function fl(c){d.setFillColor(c[0],c[1],c[2])}function R(a){return{align:a=='r'?'right':'left'}}
+function sec(t){if(y+26>278){d.addPage();y=18}y+=6;d.setFont('helvetica','bold');d.setFontSize(11);tx(DK);d.text(t,m,y);y+=4}
+function none(t){d.setFont('helvetica','normal');d.setFontSize(9.5);tx(GR);d.text(t,m+3,y+6);y+=10}
+function tbl(hd,al,xp,rows,ft){function hr(){fl(T);d.rect(m,y,W-2*m,8,'F');d.setFont('helvetica','bold');d.setFontSize(8.5);d.setTextColor(255,255,255);hd.forEach(function(h,i){d.text(h,xp[i],y+5.4,R(al[i]))});y+=8;d.setFont('helvetica','normal');d.setFontSize(9.5)}
+hr();rows.forEach(function(r,k){if(y+7>278){d.addPage();y=18;hr()}if(k%2==0){fl(LT);d.rect(m,y,W-2*m,7,'F')}tx(TX);r.forEach(function(c,i){d.text(String(c),xp[i],y+4.9,R(al[i]))});y+=7});
+d.setDrawColor(T[0],T[1],T[2]);d.setLineWidth(0.3);d.line(m,y,W-m,y);if(ft){d.setFont('helvetica','bold');d.setFontSize(9.5);tx(DK);ft.forEach(function(c,i){d.text(String(c),xp[i],y+5.2,R(al[i]))});y+=10}else y+=3}
+fl(T);d.rect(0,0,W,6,'F');d.setFont('helvetica','bold');d.setFontSize(19);tx(DK);d.text(co,m,22);d.setFont('helvetica','normal');d.setFontSize(8.5);tx(GR);d.text(ADDR,m,28);
+d.setFont('helvetica','bold');d.setFontSize(15);tx(T);d.text(me?'LAPORAN JUALAN BULANAN':'LAPORAN JUALAN AYAH',W-m,22,R('r'));d.setFont('helvetica','normal');d.setFontSize(10);tx(DK);d.text(mon,W-m,28.5,R('r'));
+d.setDrawColor(T[0],T[1],T[2]);d.setLineWidth(0.6);d.line(m,34,W-m,34);y=34;
+var items=me?[['IKAN TERJUAL',r1(w.kg)+' kg'],['JUMLAH JUALAN',rm(w.sl)],['JUMLAH BELANJA',rm(o.ex)],['BAKI BERSIH',rm(w.sl-o.ex)]]:[['IKAN TERJUAL',r1(w.kg)+' kg'],['JUMLAH JUALAN',rm(w.sl)]],bw=(W-2*m-(items.length-1)*4)/items.length;y+=8;
+items.forEach(function(it,i){var x=m+i*(bw+4);fl(LT);d.rect(x,y,bw,18,'F');fl(i==items.length-1&&me?[47,163,107]:T);d.rect(x,y,1.5,18,'F');d.setFont('helvetica','normal');d.setFontSize(7);tx(GR);d.text(it[0],x+5,y+6);d.setFont('helvetica','bold');d.setFontSize(me?10.5:13);tx(DK);d.text(it[1],x+5,y+13.5)});y+=18;
+sec('Jualan ikut jenis ikan');tbl(['Jenis ikan','Berat (kg)','Jumlah (RM)'],['l','r','r'],[m+3,120,W-m-3],['Keli','Patin'].map(function(j){return[j,r1(w.j[j]),n2(wm[j])]}),['Jumlah',r1(w.kg),n2(w.sl)]);
+var dm={};o.S.forEach(function(x){if(ow(x)!=who)return;var q=dm[x.d]=dm[x.d]||{Keli:{k:0,t:0},Patin:{k:0,t:0}};q[x.j].k+=x.k;q[x.j].t+=x.k*x.h});
+var dd=Object.keys(dm).sort();sec('Jualan harian'+(dd.length?' ('+dd.length+' hari berjualan)':''));
+if(dd.length)tbl(['Tarikh','Keli (kg)','Keli (RM)','Patin (kg)','Patin (RM)','Jumlah (RM)'],['l','r','r','r','r','r'],[m+3,70,100,128,156,W-m-3],dd.map(function(k){var q=dm[k],dt=new Date(k+'T00:00:00');return[dk[dt.getDay()]+' '+fd(k),q.Keli.k?r1(q.Keli.k):'-',q.Keli.t?n2(q.Keli.t):'-',q.Patin.k?r1(q.Patin.k):'-',q.Patin.t?n2(q.Patin.t):'-',n2(q.Keli.t+q.Patin.t)]}),['Jumlah',r1(w.j.Keli),n2(wm.Keli),r1(w.j.Patin),n2(wm.Patin),n2(w.sl)]);else none('Tiada jualan bulan ini.');
+if(me){var ks=Object.keys(o.c).sort();sec('Belanja');
+if(ks.length)tbl(['Kategori','Jumlah (RM)'],['l','r'],[m+3,W-m-3],ks.map(function(k){return[k.split(' ').slice(1).join(' ')||k,n2(o.c[k])]}),['Jumlah belanja',n2(o.ex)]);else none('Tiada belanja bulan ini.');
+if(y+16>278){d.addPage();y=18}fl(T);d.rect(m,y,W-2*m,13,'F');d.setFont('helvetica','bold');d.setFontSize(10);d.setTextColor(255,255,255);d.text('BAKI BERSIH (JUALAN - BELANJA)',m+4,y+8.4);d.setFontSize(13);d.text(rm(w.sl-o.ex),W-m-4,y+8.8,R('r'));y+=15;
+var x2=xs();if(x2.br>0){sec('Benih dimasukkan');tbl(['Jenis ikan','Bilangan (ribu ekor)'],['l','r'],[m+3,W-m-3],['Keli','Patin'].map(function(j){return[j,r1(x2.bj[j])]}),['Jumlah',r1(x2.br)])}
+var iv=invCalc();if(iv.Keli.since||iv.Patin.since){sec('Stok ikan boleh jual (semasa)');tbl(['Jenis ikan','Baki stok (kg)'],['l','r'],[m+3,W-m-3],['Keli','Patin'].map(function(j){return[j,iv[j].since?r1(iv[j].kg):'-']}))}}
+var n=d.getNumberOfPages(),nw=new Date(),stamp=fdf(td())+' '+String(nw.getHours()).padStart(2,'0')+':'+String(nw.getMinutes()).padStart(2,'0');
+for(var i=1;i<=n;i++){d.setPage(i);d.setDrawColor(200,215,218);d.setLineWidth(0.3);d.line(m,285,W-m,285);d.setFont('helvetica','normal');d.setFontSize(7.5);tx(GR);d.text(co+'  |  '+ADDR,m,290);d.text('Dijana '+stamp+'  |  Halaman '+i+'/'+n,W-m,290,R('r'))}
+pdfSave(d,'Laporan-'+who+'-'+pre()+'.pdf')}
 async function bp(){var J=window.jspdf&&window.jspdf.jsPDF;if(!J){toast('PDF belum sedia, cuba sebentar lagi.');return}
 var d=new J({unit:'mm',format:'a5'}),W=148,m=12,y,tot=0,kg=0,co=D.shop||'Abengoh Legacy',T=[14,124,134],DK=[10,64,74],LT=[238,246,247],GR=[110,125,130];
 function tx(c){d.setTextColor(c[0],c[1],c[2])}
